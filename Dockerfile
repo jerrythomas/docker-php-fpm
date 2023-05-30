@@ -18,6 +18,9 @@ RUN apt-get update && apt-get install -y \
 		g++ git zip zlib1g-dev bzip2 \
     libxml2-dev libssl-dev libpng-dev libjpeg-dev libgif-dev libxslt-dev
 
+COPY ./utils/* /usr/local/bin/.
+RUN chmod +x /usr/local/bin/docker-php* \
+    && echo "export PATH=$PATH:/usr/local/bin" >> /etc/profile
 # Add the PHP repository
 RUN wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
 RUN echo "deb https://packages.sury.org/php/ bullseye main" > /etc/apt/sources.list.d/php.list
