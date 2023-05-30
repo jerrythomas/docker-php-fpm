@@ -23,7 +23,7 @@ RUN apt-get update && apt-get install -y \
 
 RUN mkdir -p /usr/local/bin \
     && mkdir -p /usr/src/php \
-    && mkdir -p /usr/local/etc/php/conf.d/ \
+    && mkdir -p /usr/local/etc/php/conf.d/
 COPY ./utils/* /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-php* \
     && echo "export PATH=$PATH:/usr/local/bin" >> /etc/profile
