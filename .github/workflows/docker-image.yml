@@ -21,7 +21,10 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Set PHP_MM_VERSION
+        id: set_version
+        run: echo "::set-output name=php_mm_version::$(echo "${{ matrix.php_version }}" | cut -d. -f1-2)"
       - name: Build the Docker image
-        run: docker build --build-arg PHP_VERSION=${{ matrix.php_version }} . --file Dockerfile --tag jerrythomas/debian-php-fpm-dev:${{ matrix.php_version }}
+        run: docker build --build-arg PHP_FULL_VERSION=${{ matrix.php_version }} --build-arg PHP_VERSION=${{ steps.set_version.outputs.php_mm_version }} . --file Dockerfile --tag jerrythomas/debian-php-fpm-dev:${{ matrix.php_version }}
       - name: Push to docker hub
         run: docker push jerrythomas/debian-php-fpm-dev:${{ matrix.php_version }}
