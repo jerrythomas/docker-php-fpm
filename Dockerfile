@@ -36,6 +36,12 @@ RUN apt-get update && apt-get install -y \
     php5.6-mysql \
     php5.6-xml
 
+# Download PHP source code
+RUN mkdir -p /usr/src/php \
+    && curl -SL "https://www.php.net/distributions/php-5.6.20.tar.xz" -o php.tar.xz \
+    && tar -xof php.tar.xz -C /usr/src/php --strip-components=1 \
+    && rm php.tar.xz
+
 # Configure PHP-FPM
 RUN sed -i 's/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g' /etc/php/5.6/fpm/php.ini
 RUN sed -i 's/;daemonize = yes/daemonize = no/g' /etc/php/5.6/fpm/php-fpm.conf
