@@ -1,7 +1,10 @@
 FROM debian:stable-slim
+ARG PHP_VERSION=5.6.20
+# Extract major.minor version from full version
+RUN PHP_MM_VERSION=$(echo "${PHP_VERSION}" | cut -d. -f1-2)
 
-LABEL org.opencontainers.image.title="PHP 5.6.20 with FPM on Debian 11"
-LABEL org.opencontainers.image.description="PHP 5.6.20 with FPM on Debian 11"
+LABEL org.opencontainers.image.title="PHP with FPM on Debian"
+LABEL org.opencontainers.image.description="PHP with FPM on Debian"
 LABEL org.opencontainers.image.author="Jery Thomas <me@jerrythomas.name>"
 LABEL org.opencontainers.image.source="https://github.com/jerrythomas/docker-php-fpm"
 LABEL org.opencontainers.image.license="MIT"
@@ -18,7 +21,9 @@ RUN apt-get update && apt-get install -y \
 		g++ git zip zlib1g-dev bzip2 \
     libxml2-dev libssl-dev libpng-dev libjpeg-dev libgif-dev libxslt-dev
 
-RUN mkdir -p /usr/local/bin
+RUN mkdir -p /usr/local/bin \
+    && mkdir -p /usr/src/php \
+    && mkdir -p /usr/local/etc/php/conf.d/ \
 COPY ./utils/* /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-php* \
     && echo "export PATH=$PATH:/usr/local/bin" >> /etc/profile
@@ -28,27 +33,26 @@ RUN echo "deb https://packages.sury.org/php/ bullseye main" > /etc/apt/sources.l
 
 # Install PHP and PHP-FPM
 RUN apt-get update && apt-get install -y \
-    php5.6-fpm \
-    php5.6-cli \
-    php5.6-common \
-    php5.6-curl \
-    php5.6-mbstring \
-    php5.6-mysql \
-    php5.6-xml \
-    php5.6-dev
+    php${PHP_MM_VERSION}-fpm \
+    php${PHP_MM_VERSION}-cli \
+    php${PHP_MM_VERSION}-common \
+    php${PHP_MM_VERSION}-curl \
+    php${PHP_MM_VERSION}-mbstring \
+    php${PHP_MM_VERSION}-mysql \
+    php${PHP_MM_VERSION}-xml \
+    php${PHP_MM_VERSION}-dev
 
 # Download PHP source code
-RUN mkdir -p /usr/src/php \
-    && curl -SL "https://www.php.net/distributions/php-5.6.20.tar.xz" -o php.tar.xz \
+RUN curl -SL "https://www.php.net/distributions/php-${PHP_VERSION}.tar.xz" -o php.tar.xz \
     && tar -xof php.tar.xz -C /usr/src/php --strip-components=1 \
     && rm php.tar.xz
 
 # Configure PHP-FPM
-RUN sed -i 's/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g' /etc/php/5.6/fpm/php.ini
-RUN sed -i 's/;daemonize = yes/daemonize = no/g' /etc/php/5.6/fpm/php-fpm.conf
+RUN sed -i 's/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g' /etc/php/${PHP_MM_VERSION}/fpm/php.ini
+RUN sed -i 's/;daemonize = yes/daemonize = no/g' /etc/php/${PHP_MM_VERSION}/fpm/php-fpm.conf
 
 # Expose the port php-fpm is reachable on
 EXPOSE 9000
 
 # Start php-fpm server
-CMD ["/usr/sbin/php-fpm5.6", "-O"]
+CMD ["/usr/sbin/php-fpm${PHP_MM_VERSION}", "-O"]
