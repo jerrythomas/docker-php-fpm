@@ -63,6 +63,6 @@ RUN sed -i 's/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g' /etc/php/${PHP_VERSION}/
 
 # Expose the port php-fpm is reachable on
 EXPOSE 9000
-
+ENV PHP_VERSION=${PHP_VERSION}
 # Start php-fpm server
 CMD ["/usr/sbin/php-fpm${PHP_VERSION}", "-O"]
