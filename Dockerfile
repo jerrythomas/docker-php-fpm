@@ -59,10 +59,10 @@ RUN curl -SL "https://www.php.net/distributions/php-${PHP_FULL_VERSION}.tar.xz" 
 
 # Configure PHP-FPM
 RUN sed -i 's/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g' /etc/php/${PHP_VERSION}/fpm/php.ini \
-   && sed -i 's/;daemonize = yes/daemonize = no/g' /etc/php/${PHP_VERSION}/fpm/php-fpm.conf
+   && sed -i 's/;daemonize = yes/daemonize = no/g' /etc/php/${PHP_VERSION}/fpm/php-fpm.conf \
+   && ln -s /usr/sbin/php-fpm${PHP_VERSION} /usr/sbin/php-fpm
 
 # Expose the port php-fpm is reachable on
 EXPOSE 9000
-ENV PHP_VERSION=${PHP_VERSION}
 # Start php-fpm server
-CMD ["/usr/sbin/php-fpm${PHP_VERSION}", "-O"]
+CMD ["/usr/sbin/php-fpm", "-O"]
