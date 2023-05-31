@@ -41,7 +41,8 @@ RUN mkdir -p /usr/local/bin \
 COPY ./utils/* /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-php* \
     && echo "export PATH=$PATH:/usr/local/bin" >> /etc/profile \
-    && echo ". $NVM_DIR/nvm.sh" >> /etc/profile
+    && echo "export PATH=$PATH:/root/.nvm" >> /etc/profile \
+    && echo ". nvm.sh" >> /etc/profile
 
 # Install PHP and PHP-FPM
 RUN apt-get update \
