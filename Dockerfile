@@ -10,6 +10,8 @@ LABEL org.opencontainers.image.license="MIT"
 LABEL repository="https://github.com/jerrythomas/docker-php-fpm"
 LABEL maintainer="jerrythomas"
 
+ENV NVM_DIR /root/.nvm
+
 # Install dependencies
 RUN apt-get update \
  && apt-get install -y \
@@ -22,16 +24,24 @@ RUN apt-get update \
 	g++ git zip zlib1g-dev bzip2 \
     libxml2-dev libssl-dev libpng-dev libjpeg-dev libgif-dev libxslt-dev
 
+# Add the PHP repository
+RUN wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
+RUN echo "deb https://packages.sury.org/php/ bullseye main" > /etc/apt/sources.list.d/php.list
+
+# Add the Yarn repository
+RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - \
+    && echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list
+
+# Install NVM
+RUN curl https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
+
 RUN mkdir -p /usr/local/bin \
     && mkdir -p /usr/src/php \
     && mkdir -p /usr/local/etc/php/conf.d/
 COPY ./utils/* /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-php* \
-    && echo "export PATH=$PATH:/usr/local/bin" >> /etc/profile
-
-# Add the PHP repository
-RUN wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
-RUN echo "deb https://packages.sury.org/php/ bullseye main" > /etc/apt/sources.list.d/php.list
+    && echo "export PATH=$PATH:/usr/local/bin" >> /etc/profile \
+    && echo ". $NVM_DIR/nvm.sh" >> /etc/profile
 
 # Install PHP and PHP-FPM
 RUN apt-get update \
