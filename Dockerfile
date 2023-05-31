@@ -33,6 +33,7 @@ RUN curl https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
 
 RUN mkdir -p /usr/local/bin \
     && mkdir -p /usr/src/php \
+    && mkdir -p /run/php \
     && mkdir -p /usr/local/etc/php/conf.d/
 COPY ./utils/* /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-php* \
@@ -58,6 +59,7 @@ RUN curl -SL "https://www.php.net/distributions/php-${PHP_FULL_VERSION}.tar.xz" 
     && rm php.tar.xz
 
 # Configure PHP-FPM
+ENV PHP_VERSION ${PHP_VERSION}
 RUN sed -i 's/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/g' /etc/php/${PHP_VERSION}/fpm/php.ini \
    && sed -i 's/;daemonize = yes/daemonize = no/g' /etc/php/${PHP_VERSION}/fpm/php-fpm.conf \
    && ln -s /usr/sbin/php-fpm${PHP_VERSION} /usr/sbin/php-fpm
