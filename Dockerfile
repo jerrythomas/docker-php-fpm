@@ -22,7 +22,7 @@ RUN apt-get update \
     ca-certificates \
 	build-essential \
 	g++ git zip zlib1g-dev bzip2 \
-    libxml2-dev libssl-dev libpng-dev libjpeg-dev libgif-dev libxslt-dev
+    libxml2-dev libssl-dev libpng-dev libjpeg-dev libgif-dev libxslt-dev libmemcached-dev
 
 # Add the PHP repository
 RUN wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
@@ -54,7 +54,7 @@ RUN apt-get update \
     php${PHP_VERSION}-dev \
     php${PHP_VERSION}-stomp \
     php${PHP_VERSION}-imagick \
-    php${PHP_VERSION}-memcache \
+    # php${PHP_VERSION}-memcache \
     php${PHP_VERSION}-memcached \
     php${PHP_VERSION}-bcmath \
     php${PHP_VERSION}-zip
