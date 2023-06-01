@@ -34,7 +34,6 @@ RUN curl https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
 RUN mkdir -p /usr/local/bin \
     && mkdir -p /usr/src/php \
     && mkdir -p /run/php \
-    && mkdir -p /var/log \
     && mkdir -p /usr/local/etc/php/conf.d/
 COPY ./utils/* /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-php* \
