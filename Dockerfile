@@ -1,6 +1,7 @@
 FROM debian:stable-slim
 ARG PHP_VERSION=5.6
 ARG PHP_FULL_VERSION=5.6.20
+ARG DEBIAN_FRONTEND=noninteractive
 
 LABEL org.opencontainers.image.title="PHP with FPM on Debian"
 LABEL org.opencontainers.image.description="PHP with FPM on Debian"
@@ -11,6 +12,7 @@ LABEL repository="https://github.com/jerrythomas/docker-php-fpm"
 LABEL maintainer="jerrythomas"
 
 ENV NVM_DIR /root/.nvm
+ENV LC_ALL=en_US.UTF-8
 
 # Install dependencies
 RUN apt-get update \
@@ -22,11 +24,14 @@ RUN apt-get update \
     ca-certificates \
 	build-essential \
 	g++ git zip zlib1g-dev bzip2 \
-    libxml2-dev libssl-dev libpng-dev libjpeg-dev libgif-dev libxslt-dev libmemcached-dev
+    libxml2-dev libssl-dev libpng-dev libjpeg-dev libgif-dev libxslt-dev libmemcached-dev \
+    language-pack-en-base \
+    software-properties-common
 
-# Add the PHP repository
-RUN wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
-RUN echo "deb https://packages.sury.org/php/ bullseye main" > /etc/apt/sources.list.d/php.list
+# Install PHP repository
+RUN add-apt-repository ppa:ondrej/php
+# RUN wget -O /etc/apt/trusted.gpg.d/php.gpg https://packages.sury.org/php/apt.gpg
+# RUN echo "deb https://packages.sury.org/php/ bullseye main" > /etc/apt/sources.list.d/php.list
 
 # Install NVM
 RUN curl https://raw.githubusercontent.com/nvm-sh/nvm/v0.38.0/install.sh | bash
@@ -55,11 +60,14 @@ RUN apt-get update \
     php${PHP_VERSION}-stomp \
     php${PHP_VERSION}-imagick \
     php${PHP_VERSION}-memcache \
-    php${PHP_VERSION}-memcached \
-    php-memcached \
+    # php${PHP_VERSION}-memcached \
     php${PHP_VERSION}-bcmath \
-    php${PHP_VERSION}-zip
+    php${PHP_VERSION}-zip \
+    php${PHP_VERSION}-pear
+# RUN pecl install memcached-2.2.0
 
+RUN which pecl
+RUN which pear
 # Download PHP source code
 RUN curl -SL "https://www.php.net/distributions/php-${PHP_FULL_VERSION}.tar.xz" -o php.tar.xz \
     && tar -xof php.tar.xz -C /usr/src/php --strip-components=1 \
