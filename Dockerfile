@@ -56,7 +56,7 @@ RUN apt-get update \
     php${PHP_VERSION}-dev \
     php${PHP_VERSION}-stomp \
     php${PHP_VERSION}-imagick \
-    php${PHP_VERSION}-memcache \
+    # php${PHP_VERSION}-memcache \
     php${PHP_VERSION}-bcmath \
     php${PHP_VERSION}-zip
  RUN pecl install memcache-3.0.8
