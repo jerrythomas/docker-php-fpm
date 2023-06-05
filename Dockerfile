@@ -54,10 +54,10 @@ RUN apt-get update \
     php${PHP_VERSION}-dev \
     php${PHP_VERSION}-stomp \
     php${PHP_VERSION}-imagick \
-    # php${PHP_VERSION}-memcache \
-    php${PHP_VERSION}-memcached \
     php${PHP_VERSION}-bcmath \
-    php${PHP_VERSION}-zip
+    php${PHP_VERSION}-zip \
+    php-memcached
+
 # Download PHP source code
 RUN curl -SL "https://www.php.net/distributions/php-${PHP_FULL_VERSION}.tar.xz" -o php.tar.xz \
     && tar -xof php.tar.xz -C /usr/src/php --strip-components=1 \
