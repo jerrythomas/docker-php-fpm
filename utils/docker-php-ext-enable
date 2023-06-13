@@ -1,6 +1,7 @@
 #!/bin/sh
 set -e
 php_ini_path=$(php -i | grep "Loaded Configuration File" | sed 's/Loaded Configuration File => //')
+php_config_path=$(dirname "$php_ini_path")
 
 cd "$(php -r 'echo ini_get("extension_dir");')"
 
@@ -86,7 +87,8 @@ for module in $modules; do
 		continue
 	fi
 
-	ini="/usr/local/etc/php/conf.d/${iniName:-"docker-php-ext-$ext.ini"}"
+  #/usr/local/etc/php/conf.d/
+	ini="${php_config_path}/conf.d/${iniName:-"docker-php-ext-$ext.ini"}"
 	add_line_to_ini "$line" "$ini"
-	add_line_to_ini "$line" "$php_ini_path"
+	# add_line_to_ini "$line" "$php_ini_path"
 done

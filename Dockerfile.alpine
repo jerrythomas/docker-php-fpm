@@ -7,6 +7,7 @@ ENV PHP_VERSION "5"
 RUN apk add --update --no-cache \
    curl \
    binutils \
+   bash \
    php${PHP_VERSION} \
    php${PHP_VERSION}-intl \
    php${PHP_VERSION}-phpdbg \
@@ -44,6 +45,10 @@ RUN apk add --update --no-cache \
    php${PHP_VERSION}-pear \
    php${PHP_VERSION}-phar \
    php${PHP_VERSION}-openssl \
+   php${PHP_VERSION}-pdo \
+   php${PHP_VERSION}-ftp \
+   php${PHP_VERSION}-sockets \
+   php${PHP_VERSION}-iconv \
  && rm -rf /var/cache/apk/*
 
 RUN ln -s /usr/bin/php${PHP_VERSION} /usr/bin/php \
@@ -54,7 +59,8 @@ RUN ln -s /usr/bin/php${PHP_VERSION} /usr/bin/php \
 # Add docker utilities for php
 COPY utils/* /usr/local/bin/
 RUN chmod +x /usr/local/bin/docker-php-* \
-   && mkdir -p /usr/src/php/ext /var/www/html /usr/local/etc/php/conf.d
+   && mkdir -p /usr/src/php/ext /var/www/html /usr/local/etc/php \
+   && ln -s /etc/php${PHP_VERSION}/conf.d /usr/local/etc/php/conf.d
 
 # Install dependencies for pecl install
 RUN apk add --no-cache \
@@ -73,7 +79,7 @@ RUN pecl install xdebug-2.5.5 \
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
 # Cleanup build dependencies
-RUN apk del --purge autoconf g++ make zlib-dev imagemagick6-dev openssl-dev
+RUN apk del --purge autoconf g++ make zlib-dev imagemagick6-dev
 
 # Configure PHP-FPM
 RUN touch /etc/php${PHP_VERSION}/fpm.d/www.conf
@@ -86,7 +92,7 @@ RUN chown -R www-data:www-data /var/www/html \
     && chown -R www-data:www-data /usr/src/php/ext \
     && chmod -R 755 /var/www/html
 
-USER www-data
+# USER www-data
 WORKDIR /var/www/html
 
 # Expose the PHP-FPM port
