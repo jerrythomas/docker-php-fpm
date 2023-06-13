@@ -86,7 +86,7 @@ RUN chown -R www-data:www-data /var/www/html \
     && chown -R www-data:www-data /usr/src/php/ext \
     && chmod -R 755 /var/www/html
 
-# USER www-data
+USER www-data
 WORKDIR /var/www/html
 
 # Expose the PHP-FPM port
