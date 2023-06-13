@@ -6,6 +6,7 @@ ENV PHP_VERSION "5"
 # Install required packages
 RUN apk add --update --no-cache \
    curl \
+   binutils \
    php${PHP_VERSION} \
    php${PHP_VERSION}-intl \
    php${PHP_VERSION}-phpdbg \
@@ -82,7 +83,7 @@ RUN chown -R www-data:www-data /var/www/html \
     && chown -R www-data:www-data /usr/src/php/ext \
     && chmod -R 755 /var/www/html
 
-USER www-data
+# USER www-data
 WORKDIR /var/www/html
 
 # Expose the PHP-FPM port

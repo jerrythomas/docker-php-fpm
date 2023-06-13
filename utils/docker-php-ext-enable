@@ -1,5 +1,6 @@
 #!/bin/sh
 set -e
+php_ini_path=$(php -i | grep "Loaded Configuration File" | sed 's/Loaded Configuration File => //')
 
 cd "$(php -r 'echo ini_get("extension_dir");')"
 
@@ -11,6 +12,15 @@ usage() {
 	echo
 	echo 'Possible values for module-name:'
 	echo $(find -maxdepth 1 -type f -name '*.so' -exec basename '{}' ';' | sort)
+}
+
+add_line_to_ini() {
+    local line="$1"
+    local ini="$2"
+
+    if ! grep -q "$line" "$ini" 2>/dev/null; then
+        echo "$line" >> "$ini"
+    fi
 }
 
 opts="$(getopt -o 'h?' --long 'help,ini-name:' -- "$@" || { usage >&2 && false; })"
@@ -77,7 +87,6 @@ for module in $modules; do
 	fi
 
 	ini="/usr/local/etc/php/conf.d/${iniName:-"docker-php-ext-$ext.ini"}"
-	if ! grep -q "$line" "$ini" 2>/dev/null; then
-		echo "$line" >> "$ini"
-	fi
+	add_line_to_ini "$line" "$ini"
+	add_line_to_ini "$line" "$php_ini_path"
 done
