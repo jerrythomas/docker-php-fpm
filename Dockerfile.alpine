@@ -57,11 +57,14 @@ RUN chmod +x /usr/local/bin/docker-php-* \
    && mkdir -p /usr/src/php/ext /var/www/html /usr/local/etc/php/conf.d
 
 # Install dependencies for pecl install
-RUN apk add autoconf g++ make zlib-dev imagemagick6-dev openssl-dev
+RUN apk add --no-cache \
+        autoconf g++ make \
+        zlib-dev imagemagick6-dev openssl-dev \
+        libmemcached zlib imagemagick6
 
 # Install PHP extensions and enable
 RUN pecl install xdebug-2.5.5 \
-    && yes | pecl install memcache-3.0.8 \
+    && yes | CFLAGS="-fgnu89-inline" pecl install memcache-3.0.8 \
     && yes | pecl install imagick-3.4.3 \
     && echo "/usr" | pecl install stomp-1.0.9 \
     && docker-php-ext-enable memcache xdebug imagick stomp
@@ -69,8 +72,8 @@ RUN pecl install xdebug-2.5.5 \
 # Install Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Cleanup dependencies
-RUN apk del autoconf g++ make zlib-dev imagemagick6-dev openssl-dev
+# Cleanup build dependencies
+RUN apk del --purge autoconf g++ make zlib-dev imagemagick6-dev openssl-dev
 
 # Configure PHP-FPM
 RUN touch /etc/php${PHP_VERSION}/fpm.d/www.conf
