@@ -8,6 +8,7 @@ RUN apk add --update --no-cache \
    curl \
    binutils \
    bash \
+   gettext \
    php${PHP_VERSION} \
    php${PHP_VERSION}-intl \
    php${PHP_VERSION}-phpdbg \
