@@ -58,26 +58,25 @@ RUN LC_ALL=C.UTF-8 apt-add-repository -y ppa:ondrej/php \
 && rm -rf /var/lib/apt/lists/*
 
 # Configure PHP-FPM
-RUN sed -i 's/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/' /etc/php/${PHP_VERSION}/fpm/php.ini
-RUN sed -i 's/;listen.mode = 0660/listen.mode = 0666/' /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf
-RUN sed -i "s/php${PHP_VERSION}-fpm.log/php-fpm\/error.log/" /etc/php/${PHP_VERSION}/fpm/php-fpm.conf
+# RUN sed -i 's/;cgi.fix_pathinfo=1/cgi.fix_pathinfo=0/' /etc/php/${PHP_VERSION}/fpm/php.ini
+# RUN sed -i 's/;listen.mode = 0660/listen.mode = 0666/' /etc/php/${PHP_VERSION}/fpm/pool.d/www.conf
+# RUN sed -i "s/php${PHP_VERSION}-fpm.log/php-fpm\/error.log/" /etc/php/${PHP_VERSION}/fpm/php-fpm.conf
 
-# Install Composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+# # Install Composer
+# RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Add docker utilities for php
-COPY utils/* /usr/local/bin/
-RUN chmod +x /usr/local/bin/docker-php-*
-RUN mkdir -p /usr/src/php/ext /var/www/html /var/log/php-fpm /run/php
+# # Add docker utilities for php
+# COPY utils/* /usr/local/bin/
+# RUN chmod +x /usr/local/bin/docker-php-*
+# RUN mkdir -p /usr/src/php/ext /var/www/html /var/log/php-fpm /run/php
 
-# Change ownership of our applications
-RUN chown -R www-data:www-data /var/www/html \
-    && chown -R www-data:www-data /var/log/php-fpm \
-		&& chown -R www-data:www-data /run/php \
-    && chown -R www-data:www-data /usr/src/php/ext \
-    && chmod -R 755 /var/www/html
+# # Change ownership of our applications
+# RUN chown -R www-data:www-data /var/www/html \
+#     && chown -R www-data:www-data /var/log/php-fpm \
+# 		&& chown -R www-data:www-data /run/php \
+#     && chown -R www-data:www-data /usr/src/php/ext \
+#     && chmod -R 755 /var/www/html
 
-USER www-data
 WORKDIR /var/www/html
 
 # Expose the PHP-FPM port
